@@ -1,4 +1,4 @@
-# Demo of Workbox-driven (v4) bundled service worker
+# Demo of Workbox-driven (v4) bundled service worker (cloned)
 
 ## Slides
 [Sending the Angular app into deep, deep offline with Workbox](https://slides.com/webmax/angular-workbox/)
