@@ -10,21 +10,67 @@
       rel="stylesheet"
     />
     <meta charset="utf-8" />
-    <title>PWA For Production</title>
+    <title>My PWA For Production</title>
     <base href="/" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     
-  <link rel="stylesheet" href="styles.css"></head>
+    <link rel="stylesheet" href="styles.css">
+    
+    <link rel="manifest" href="manifest.json">
+
+  </head>
+
   <body>
     <app-navigation></app-navigation>
-  <script type="text/javascript" src="runtime.js"></script><script type="text/javascript" src="polyfills.js"></script><script type="text/javascript" src="main.js"></script></body>
+
+    <button id="btnInstall" disabled style="position: absolute; top: 23px; right: 16px; z-index: 10;">Install PWA</button>
+  <script type="text/javascript" src="runtime.js"></script>
+  <script type="text/javascript" src="polyfills.js"></script>
+  <script type="text/javascript" src="main.js"></script></body>
+
   <script>
-    // SW Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker
+          .register('sw-handmade.js')
+          .then(registration => console.log('[SW Registration]: ' + registration));
+      });
+    }
   </script>
 
   <script>
-    // App Installation
+    window.addEventListener('beforeinstallprompt', event => {
+      console.log('beforeinstallprompt event was fired');
+
+      // Prevent Chrome <=67 from automatically showing a prompt
+      event.preventDefault();
+
+      // Stash the event so it can be triggered later
+      this.installPromptEvent = event;
+
+      // Enable the button
+      btnInstall.disabled = false;
+    });
+
+    var btnInstall = document.querySelector('#btnInstall');
+
+    btnInstall.addEventListener('click', () => {
+      btnInstall.disabled = true;
+
+      installPromptEvent.prompt();
+
+      installPromptEvent.userChoice.then(choice => {
+        if (choice.outcome === 'accepted') {
+          console.log('User accepted the A2HS prompt');
+        } else {
+          console.log('User declined the A2HS prompt');
+        }
+
+        // Clear the saved prompt since it can't be used again
+        installPromptEvent = null;
+      })
+    })
   </script>
 </html>
